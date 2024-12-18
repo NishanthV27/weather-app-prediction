@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* ----------------- GOOGLE FONTS ----------------- */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;500;600&display=swap');
+    
+    /* ----------------- VARIABLES ----------------- */
+    :root {
+        --orange-color: rgb(246, 99, 53);
+        --dark-color: rgb(27, 31, 41);
+        --border: rgba(255, 255, 255, 0.25);
+        --background: rgba(255, 255, 255, 0.1);
+        --box_shadow: rgba(3, 46, 87, 0.3);
+        --highlight: #ffcc00;
+        --btn-hover: #f07f3a;
+        --btn-active: #e36928;
+    }
+    
+    /* ----------------- GLOBAL STYLES ----------------- */
+    html {
+        font-size: 10px;
+    }
+    
+    * {
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+    }
+    
+    body {
+        background: url('images/background.jpg');
+        background-position: center;
+        background-size: cover;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.3s ease-in-out;
+    }
+    
+    /* ----------------- CONTAINER ----------------- */
+    .container {
+        width: 40%;
+        background: var(--background);
+        backdrop-filter: blur(0.5rem);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 1rem;
+        box-shadow: 0 1.8rem 3.7rem var(--box_shadow);
+        padding: 3rem;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    
+    /* Remove blur on hover */
+    .container:hover {
+        transform: scale(1.05);
+        opacity: 0.9;
+        backdrop-filter: none; /* This prevents the blur on hover */
+    }
+    
+    /* ----------------- SEARCH BOX ----------------- */
+    .search_box {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        border-radius: 3rem;
+        padding: 1rem 1.5rem;
+        backdrop-filter: blur(0.4rem) saturate(180%);
+        box-shadow: 0 1.8rem 3.7rem var(--box_shadow);
+        margin-top: 2rem;
+        transition: all 0.3s ease;
+    }
+    
+    /* Search box hover effect */
+    .search_box:hover {
+        background: rgba(255, 255, 255, 0.4);
+        transform: scale(1.02);
+    }
+    
+    /* Search box input */
+    .search_box input {
+        background: transparent;
+        flex: 1;
+        border: 0;
+        outline: none;
+        padding: 0 1rem;
+        font-size: 1.6rem;
+        color: var(--dark-color);
+        transition: all 0.3s ease;
+    }
+    
+    .search_box input::placeholder {
+        color: var(--dark-color);
+    }
+    
+    .search_box input:focus {
+        border-bottom: 2px solid var(--orange-color);
+    }
+    
+    /* Search button */
+    .search_box button {
+        border: 0;
+        border-radius: 50%;
+        background: var(--orange-color);
+        cursor: pointer;
+        width: 3.5rem;
+        height: 3.5rem;
+        transition: background 0.3s ease, transform 0.3s ease;
+    }
+    
+    .search_box button:hover {
+        background: var(--btn-hover);
+        transform: scale(1.1);
+    }
+    
+    .search_box button:active {
+        background: var(--btn-active);
+    }
+    
+    /* ----------------- WEATHER DISPLAY ----------------- */
+    .error {
+        margin: 4rem 0 5rem 0;
+        color: var(--dark-color);
+        font-weight: 600;
+        font-size: 2rem;
+        text-transform: uppercase;
+        text-align: center;
+    }
+    
+    #show {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+    
+    #show h2 {
+        font-size: 2.6rem;
+        font-weight: 600;
+        color: var(--dark-color);
+    }
+    
+    .weather, .desc {
+        color: var(--dark-color);
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-top: 1rem;
+    }
+    
+    #show img {
+        width: 10rem;
+        margin: 2rem 0;
+    }
+    
+    #show h1 {
+        font-size: 6rem;
+        margin: 2rem 0;
+        color: var(--dark-color);
+    }
+    
+    .temp_container {
+        display: flex;
+        justify-content: center;
+        margin: 3rem 0 5rem 0;
+        width: 100%;
+    }
+    
+    .temp_container div {
+        padding: 1rem 1.5rem;
+        width: 50%;
+    }
+    
+    .temp_container .title {
+        font-weight: 600;
+        color: var(--dark-color);
+        font-size: 1.6rem;
+    }
+    
+    .temp_container .temp {
+        font-weight: 600;
+        color: var(--orange-color);
+        font-size: 1.6rem;
+    }
+    
+    /* Suggestions Styles */
+    .suggestions {
+        position: absolute;
+        top: 3.5rem;
+        width: 100%;
+        max-height: 15rem;
+        overflow-y: auto;
+        background-color: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.15);
+        border-radius: 0.5rem;
+        z-index: 10;
+        transition: all 0.3s ease;
+    }
+    
+    .suggestions .suggestion {
+        padding: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    
+    .suggestions .suggestion:hover {
+        background-color: rgba(240, 240, 240, 0.6);
+    }
+    
+    /* ----------------- RESPONSIVE STYLES ----------------- */
+    @media (max-width: 768px) {
+        .container {
+            width: 80%;
+        }
+    
+        .temp_container {
+            flex-direction: column;
+            align-items: center;
+        }
+    
+        .temp_container div {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+    } 
+</style>
+    
+    <title>Weather Web App with City Suggestions</title>
+    <script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="search_box">
+            <input type="text" placeholder="Enter a city name" id="city" autocomplete="off" />
+            <button id="search"><ion-icon class="icon" name="search"></ion-icon></button>
+        </div>
+        <div id="show"></div>
+        <div id="suggestions" class="suggestions"></div> <!-- Suggestions Container -->
+    </div>
+
+    <script>
+        let show = document.getElementById("show");
+        let search = document.getElementById("search");
+        let cityVal = document.getElementById("city");
+        let suggestionsDiv = document.getElementById("suggestions");
+
+        let key = "2f745fa85d563da5adb87b6cd4b81caf"; // Your API key
+
+        // Fetch city suggestions
+        let getCitySuggestions = () => {
+            let query = cityVal.value;
+            if (query.length > 2) {
+                let url = `https://api.openweathermap.org/data/2.5/find?q=${query}&appid=${key}&units=metric`;
+
+                fetch(url)
+                    .then((resp) => resp.json())
+                    .then((data) => {
+                        suggestionsDiv.innerHTML = "";
+                        if (data.list && data.list.length > 0) {
+                            data.list.forEach((city) => {
+                                let suggestion = document.createElement("div");
+                                suggestion.classList.add("suggestion");
+                                suggestion.textContent = `${city.name}, ${city.sys.country}`;
+                                suggestion.onclick = () => {
+                                    cityVal.value = city.name;
+                                    suggestionsDiv.innerHTML = "";
+                                    getWeather(); // Call getWeather with the selected city
+                                };
+                                suggestionsDiv.appendChild(suggestion);
+                            });
+                        }
+                    })
+                    .catch((err) => {
+                        suggestionsDiv.innerHTML = "<div class='suggestion'>Error fetching city suggestions</div>";
+                    });
+            } else {
+                suggestionsDiv.innerHTML = ""; // Clear suggestions if the query is too short
+            }
+        };
+
+        // Fetch and display weather data
+        let getWeather = () => {
+            let cityValue = cityVal.value;
+            if (cityValue.length == 0) {
+                show.innerHTML = `<h3 class="error">Please enter a city name</h3>`;
+            } else {
+                let url = `https://api.openweathermap.org/data/2.5/weather?q=${cityValue}&appid=${key}&units=metric`;
+                cityVal.value = "";
+                fetch(url)
+                    .then((resp) => resp.json())
+                    .then((data) => {
+                        show.innerHTML = `
+                            <h2>${data.name}, ${data.sys.country}</h2>
+                            <h4 class="weather">${data.weather[0].main}</h4>
+                            <h4 class="desc">${data.weather[0].description}</h4>
+                            <img src="https://openweathermap.org/img/w/${data.weather[0].icon}.png">
+                            <h1>${data.main.temp} &#176;</h1>
+                            <div class="temp_container">
+                                <div>
+                                    <h4 class="title">min</h4>
+                                    <h4 class="temp">${data.main.temp_min}&#176;</h4>
+                                </div>
+                                <div>
+                                    <h4 class="title">max</h4>
+                                    <h4 class="temp">${data.main.temp_max}&#176;</h4>
+                                </div>
+                            </div>
+                            <div class="additional_info">
+                                <h4 class="title">Humidity</h4>
+                                <h4 class="temp">${data.main.humidity}%</h4>
+                                <h4 class="title">Wind Speed</h4>
+                                <h4 class="temp">${data.wind.speed} m/s</h4>
+                            </div>
+                        `;
+                    })
+                    .catch(() => {
+                        show.innerHTML = `<h3 class="error">City not found</h3>`;
+                    });
+            }
+        };
+
+        // Event Listeners
+        search.addEventListener("click", getWeather);
+        window.addEventListener("load", getWeather);
+        cityVal.addEventListener("input", getCitySuggestions); // Listen to input for city suggestions
+    </script>
+</body>
+</html>
